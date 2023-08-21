@@ -1,23 +1,47 @@
-import { atom, useRecoilValue } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import { recoilPersist } from "recoil-persist";
-import { UserType } from "../type/UserType";
+import { userType } from "@/type/UserType";
 
 const { persistAtom } = recoilPersist({
     key: 'sessionStorage',
     storage : sessionStorage,
 })
 
-export const UserAtom = atom<UserType>({
-    key : "UserAtom",
+const userAtom = atom<userType>({
+    key : "userAtom",
     default: {
-        userId : -1,
+        userIdx : -1,
+        userId : "",
         userName : "비회원",
         accessToken : "",
     },
     effects_UNSTABLE: [persistAtom],
-})
+});
 
-//UserId체크 함수
-export function CheckUserId(checkId: number){
-    return checkId == useRecoilValue(UserAtom).userId;
+//값 세팅
+function SetUser(params? : userType){useSetRecoilState(userAtom)(params);}
+
+//UserId get
+function GetUserIdx():number {return useRecoilValue(userAtom).userIdx;}
+
+//로그인한 회원 idx와 맞는지 확인하는 함수
+function CheckUserIdx(checkIdx: number):boolean {return checkIdx == GetUserIdx();}
+
+//userId Get
+function GetUserId():string {return useRecoilValue(userAtom).userId;}
+
+//userName Get
+function GetUserName():string {return useRecoilValue(userAtom).userName;}
+
+//accessToken Get
+function SetAccessToken(accessToken: string) {
+    const user = {...useRecoilValue(userAtom), accessToken};
+    SetUser(user);
 }
+
+//accessToken Get
+function GetAccessToken():string {return useRecoilValue(userAtom).accessToken;}
+
+function GetIsAdmin():boolean {return useRecoilValue(userAtom).isAdmin;}
+
+export { userAtom, SetUser, GetUserIdx, CheckUserIdx, GetUserId, GetUserName, SetAccessToken, GetAccessToken, GetIsAdmin };
