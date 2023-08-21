@@ -3,5 +3,5 @@ export type userType = {
     userId : string,
     userName : string,
     accessToken : string,
-    isAdmin? : boolean,
+    isAdmin : boolean,
 }
